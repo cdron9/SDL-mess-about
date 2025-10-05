@@ -1,0 +1,5 @@
+up and running, feeling good. 
+
+potentially look to use another file now for programming and keep current main.c as a super simple instruction set. 
+
+next: add movement to rectangle either via gravity force (fairly complex but will def help for physics stuff), or via keyboard input (good for event handling and game creation).
