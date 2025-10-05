@@ -2,6 +2,15 @@
 #include <SDL3/SDL_main.h>
 #include <stdlib.h>
 
+// Position struct for squares pixel co-ords. 
+// can either update with helper function for creating effects such as gravity.
+// or can iterate position x and y according to keyboard input
+typedef struct {
+    float x, y;
+} Position;
+
+Position pos = {0, 0};
+
 int main(int argc, char* argv[]) {
 
     SDL_Window *window = NULL;
@@ -25,8 +34,34 @@ int main(int argc, char* argv[]) {
 
     while (!done) {
         while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_EVENT_QUIT) {
-                done = true;
+            switch (event.type) {
+                case SDL_EVENT_QUIT: 
+                        done = true; 
+                        break;
+                case SDL_EVENT_KEY_DOWN:
+                    if (pos.x < 0) { 
+                        pos.x = 0; 
+                        break; }
+                    else if (pos.y < 0) {
+                        pos.y = 0;
+                        break;
+                    }                               // attempt at bounds checking (mega simple, research better method)
+                    
+                    else {                                  // need to prevent quare going below 0 for correct bounds checking (quick fix done already find better method)
+                        if (event.key.key == SDLK_W) {              // W and S are inverse?
+                            pos.y--;                                // handle in helper funciton this is super ugly
+                        }                                               // SOOO UGLY LOL
+                        else if (event.key.key == SDLK_S) {
+                            pos.y++;
+                        }
+                        else if (event.key.key == SDLK_D) {
+                            pos.x++;
+                        }
+                        else if (event.key.key == SDLK_A) {
+                            pos.x--;
+                        }
+                    }
+                    break;
             }
         }
 
@@ -40,7 +75,7 @@ int main(int argc, char* argv[]) {
         SDL_SetRenderDrawColor(renderer, 255,0,0,255); // should be red
 
         // define the rectangle and render it
-        SDL_FRect rect = {200,150,100,100}; // read documentation on this 
+        SDL_FRect rect = {pos.x,pos.y,100,100}; // read documentation on this 
         SDL_RenderFillRect(renderer, &rect);
 
         // finally update screen
