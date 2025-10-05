@@ -14,7 +14,7 @@ SDL_INC = /opt/homebrew/opt/sdl3/include
 SDL_LIB = /opt/homebrew/opt/sdl3/lib
 
 # Compiler flags
-CFLAGS = -I$(SDL_INC) -Wall -g
+CFLAGS = -I$(SDL_INC) -Wall
 LDFLAGS = -L$(SDL_LIB) -lSDL3
 
 # Default target
