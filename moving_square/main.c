@@ -11,7 +11,7 @@ typedef struct {
 
 Position pos = {0, 0};
 
-void input_handling(SDL_Event event, Position* pos);
+void handle_input (SDL_Event event, bool *w, bool *a, bool *s, bool *d);
 
 int main(int argc, char* argv[]) {
 
@@ -29,33 +29,40 @@ int main(int argc, char* argv[]) {
     renderer = SDL_CreateRenderer(window, NULL); // NULL to let sdl auto pick the rendering driver (idk what that is)
 
 
-    if (window == NULL) {
+    if (window == NULL || renderer == NULL) {
             SDL_Log("Couldnt create widnow: %s\n", SDL_GetError());
             return 1;
         }
 
+    Position pos = {270, 190};
+    float speed = 300.0f; // pixels per second for movement
+    bool w = false, a = false, s = false, d = false;
+
+    Uint64 lastTime = SDL_GetTicks();
+
     while (!done) {
         while (SDL_PollEvent(&event)) {
-            switch (event.type) {
-                case SDL_EVENT_QUIT: 
-                        done = true; 
-                        break;
-                case SDL_EVENT_KEY_DOWN:
-                    if (pos.x < 0) { 
-                        pos.x = 0; 
-                        break; }
-                    else if (pos.y < 0) {
-                        pos.y = 0;
-                        break;
-                    }                               
-                    else {     
-                        input_handling(event, &pos);
-                    }
-                    break;
-            }
+            if (event.type == SDL_EVENT_QUIT)
+                done = true;
+            else if (event.type == SDL_EVENT_KEY_DOWN || event.type == SDL_EVENT_KEY_UP)
+                handle_input(event, &w,&a,&s,&d);
         }
 
-        // --- Rendering takes places all in loop ---
+        // movement for each frame
+        Uint64 currentTime = SDL_GetTicks();
+        float delta = (currentTime - lastTime) / 1000.0f;
+        lastTime = currentTime;
+
+        if (w) pos.y -= speed * delta;
+        if (s) pos.y += speed * delta;
+        if (a) pos.x -= speed * delta;
+        if (d) pos.x += speed * delta;
+
+        // bounds checking
+        if (pos.x < 0) pos.x = 0;
+        if (pos.y < 0) pos.y = 0;
+        if (pos.x > 540) pos.x = 540;
+        if (pos.y > 380) pos.y = 380;
 
         // clear screen and create background color
         SDL_SetRenderDrawColor(renderer, 255,255,255,255);
@@ -82,21 +89,16 @@ int main(int argc, char* argv[]) {
 }
 
 
+void handle_input (SDL_Event event, bool *w, bool *a, bool *s, bool *d) {
+    bool pressed = (event.type == SDL_EVENT_KEY_DOWN);
 
-
-
-void input_handling(SDL_Event event, Position* pos) {
-
-    if (event.key.key == SDLK_W) {              // W and S are inverse?
-        pos->y-=5;                               
-    }                                            
-    else if (event.key.key == SDLK_S) {
-        pos->y+=5;
-    }
-    else if (event.key.key == SDLK_D) {
-        pos->x+=5;
-    }
-    else if (event.key.key == SDLK_A) {
-        pos->x-=5;
+    switch (event.key.key) {
+        case SDLK_W: *w = pressed; break;
+        case SDLK_A: *a = pressed; break;
+        case SDLK_S: *s = pressed; break;
+        case SDLK_D: *d = pressed; break;
+        default: break;
     }
 }
+
+
