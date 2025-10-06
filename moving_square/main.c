@@ -88,15 +88,15 @@ int main(int argc, char* argv[]) {
 void input_handling(SDL_Event event, Position* pos) {
 
     if (event.key.key == SDLK_W) {              // W and S are inverse?
-        pos->y--;                               
+        pos->y-=5;                               
     }                                            
     else if (event.key.key == SDLK_S) {
-        pos->y++;
+        pos->y+=5;
     }
     else if (event.key.key == SDLK_D) {
-        pos->x++;
+        pos->x+=5;
     }
     else if (event.key.key == SDLK_A) {
-        pos->x--;
+        pos->x-=5;
     }
 }
