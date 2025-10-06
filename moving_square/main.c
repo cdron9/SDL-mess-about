@@ -11,6 +11,8 @@ typedef struct {
 
 Position pos = {0, 0};
 
+void input_handling(SDL_Event event, Position* pos);
+
 int main(int argc, char* argv[]) {
 
     SDL_Window *window = NULL;
@@ -45,21 +47,9 @@ int main(int argc, char* argv[]) {
                     else if (pos.y < 0) {
                         pos.y = 0;
                         break;
-                    }                               // attempt at bounds checking (mega simple, research better method)
-                    
-                    else {                                  // need to prevent quare going below 0 for correct bounds checking (quick fix done already find better method)
-                        if (event.key.key == SDLK_W) {              // W and S are inverse?
-                            pos.y--;                                // handle in helper funciton this is super ugly
-                        }                                               // SOOO UGLY LOL
-                        else if (event.key.key == SDLK_S) {
-                            pos.y++;
-                        }
-                        else if (event.key.key == SDLK_D) {
-                            pos.x++;
-                        }
-                        else if (event.key.key == SDLK_A) {
-                            pos.x--;
-                        }
+                    }                               
+                    else {     
+                        input_handling(event, &pos);
                     }
                     break;
             }
@@ -89,4 +79,24 @@ int main(int argc, char* argv[]) {
     SDL_DestroyWindow(window);
     SDL_Quit();
     return 0;
+}
+
+
+
+
+
+void input_handling(SDL_Event event, Position* pos) {
+
+    if (event.key.key == SDLK_W) {              // W and S are inverse?
+        pos->y--;                               
+    }                                            
+    else if (event.key.key == SDLK_S) {
+        pos->y++;
+    }
+    else if (event.key.key == SDLK_D) {
+        pos->x++;
+    }
+    else if (event.key.key == SDLK_A) {
+        pos->x--;
+    }
 }
